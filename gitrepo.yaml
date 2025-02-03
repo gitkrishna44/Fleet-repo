@@ -6,8 +6,6 @@ metadata:
 spec:
   repo: https://github.com/gitkrishna44/Fleet-repo
   branch: main
-  paths:
-    - fleet/my-app
   targetNamespace: my-app
   helm:
     releaseName: my-app
