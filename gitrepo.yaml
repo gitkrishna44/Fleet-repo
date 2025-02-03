@@ -6,6 +6,6 @@ metadata:
 spec:
   repo: https://github.com/gitkrishna44/Fleet-repo
   branch: main
-  targetNamespace: my-app
+  targetNamespace: nginx
   helm:
-    releaseName: my-app
+    releaseName: nginx-chart
