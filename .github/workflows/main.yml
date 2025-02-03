@@ -1,0 +1,43 @@
+name: Deploy to Fleet with Cached Images, GitRepo Watch, and Retry
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+  
+    - name: Check and Apply Fleet GitRepo Watch Configuration
+      run: |
+          if kubectl get gitrepo my-app-repo -n fleet-local > /dev/null 2>&1; then
+          echo "GitRepo already exists. Skipping creation."
+          else
+          echo "Applying GitRepo configuration..."
+          kubectl apply -f gitrepo.yaml
+          fi
+          kubectl get gitrepo -n fleet-local
+  
+    - name: Apply Fleet Configurations
+      run: |
+        kubectl apply -f fleet.yaml
+  
+    - name:  Wait for Deployment with Retry
+      run: |
+        RETRIES=5
+        INTERVAL=30
+        for i in $(seq 1 $RETRIES); do
+        STATUS=$(kubectl get pods -n my-app -o jsonpath="{.items[*].status.phase}" | grep -c "Running" || true)
+        if [[ "$STATUS" -gt 0 ]]; then
+        echo "Deployment succeeded!"
+        exit 0
+        fi
+        echo "Retrying in $INTERVAL seconds..."
+        sleep $INTERVAL
+        done
+        echo "Deployment failed after $RETRIES retries"
+        exit 1
