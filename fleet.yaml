@@ -2,7 +2,7 @@ namespace: sample-helm
 # Custom helm options
 helm:
   # The release name to use. If empty a generated release name will be used
-  releaseName: my-app
+  releaseName: nginx-chart
   # The directory of the chart in the repo.
   chart: "https://github.com/gitkrishna44/Fleet-repo"
   # An https to a valid Helm repository to download the chart from
